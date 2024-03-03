@@ -1,0 +1,1 @@
+export const MONGO_DATABASE="movie-api-db";

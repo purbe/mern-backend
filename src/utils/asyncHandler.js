@@ -4,7 +4,7 @@ const asyncHandler = (requestHandler)=> {
             .catch((err) => next(err))
     }
 }
-
+//always return function in higher oder function
 
 export {asyncHandler}
 

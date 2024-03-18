@@ -85,20 +85,23 @@ const generateAccessAndRefreshToken = async (userId)=>{
  const loginUser = asyncHandler(async (req,res)=>{
 
     const {username,email,password} = req.body;
-    console.log(`email ${email} ${username}`);
-    if(!username && !email){
-        throw new ApiError(400,"username and email required");
+    // console.log(`email ${email} ${username} ${password}`);
+    if(!username && !email) {
+        throw new ApiError(400,"username,email required");
+    }
+    if(!password){
+        throw new ApiError(400,"password is required");
     }
 
-    const User = await User.findOne({
+    const user = await User.findOne({
         $or:[{username},{email}]
     })
 
-    if(!User){
+    if(!user){
         throw new ApiError(409,"user does not exist");
     }
 
-    const validatePassword = await User.isPasswordCorrect(password);
+    const validatePassword = await user.isPasswordCorrect(password);
 
     if(!validatePassword){
         throw  new ApiError(400,"invalid credential ")

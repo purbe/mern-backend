@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
 //     })
 // })
 
-const generateAccessAndRefreshToken = async (userId)=>{
+ const generateAccessAndRefreshToken = async (userId)=>{
     try{
         const user = await User.findById(userId)
         const accessToken = user.generateAccessToken();
@@ -100,16 +100,17 @@ const generateAccessAndRefreshToken = async (userId)=>{
     if(!user){
         throw new ApiError(409,"user does not exist");
     }
-
+    //console.log(user.password);
     const validatePassword = await user.isPasswordCorrect(password);
-
+    //console.log(validatePassword);
     if(!validatePassword){
         throw  new ApiError(400,"invalid credential ")
     }
 
     const {accessToken,refreshToken}= await generateAccessAndRefreshToken(user._id);
 
-    const loggedUser = await User.findById(user._id).select("-password -refreshToken")
+    const loggedUser = await User.findById(user._id)
+                                                                        .select("-password -refreshToken")
 
     //cookie only be modified by server
     const options = {
@@ -326,5 +327,7 @@ export {
     refreshAccessToken,
     changeCurrentPassword,
     getCurrentUser,
-    updateAccountDetails
+    updateAccountDetails,
+    updateUserAvatar,
+    updateUserCoverImage
 }

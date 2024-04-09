@@ -12,8 +12,10 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     //check if already subscribed then return unsubscribe
     //else return subscribe
     if(!isValidObjectId(channelId)){
-        throw new ApiError(401,"channelid is not valid")
+        throw new ApiError(401,"channelId is not valid")
     }
+
+    await Subscription.findById(channelId)
 
 
 })

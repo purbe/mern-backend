@@ -6,6 +6,32 @@ import {ApiResponse} from "../utils/ApiResponse.js";
 import {isValidObjectId} from "mongoose";
 
 
+const getAllVideos = asyncHandler(async (req, res) => {
+    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    //TODO: get all videos based on query, sort, pagination
+    // Calculate skip value for pagination
+    // Constructing the sort options based on parameters
+    const sortOptions = {};
+    if (sortBy) {
+        sortOptions[sortBy] = sortType === 'desc' ? -1 : 1;
+    }
+    const skip = (page - 1) * limit;
+    if (userId) {
+        query.owner = userId;
+    }
+    const allVideo=  await Video.find(query).sort(sortOptions).skip(skip).limit(limit)
+    // Convert cursor to array of documents
+    const videos = await allVideo.toArray();
+
+    // Output the results
+    console.log(videos);
+    return res.status(200).json(
+        new ApiResponse(
+            200,videos,
+            "fetch all video"
+        )
+    )
+})
 const publishAVideo = asyncHandler(async (req,res)=> {
     const{title,description} = req.body
 

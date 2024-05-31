@@ -1,5 +1,4 @@
 import mongoose, {isValidObjectId} from "mongoose"
-import {User} from "../models/user.model.js"
 import { Subscription } from "../models/subscription.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
@@ -11,12 +10,25 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     // TODO: toggle subscription
     //check if already subscribed then return unsubscribe
     //else return subscribe
-    if(!isValidObjectId(channelId)){
-        throw new ApiError(401,"channelId is not valid")
+    const existingSubscription = await Subscription.findOne({ subscriber: req.user._id, channel:channelId });
+
+    if (existingSubscription) {
+        // If user is already subscribed, unsubscribe them
+        await Subscription.deleteOne({ subscriber: req.user.id, channel:channelId });
+        console.log(`Unsubscribed user ${req.user.id} from channel ${channelId}`);
+        res.status(200).json( new ApiResponse(
+            200,
+    "Unsubscribed successfully"
+        ))
+    } else {
+        // If user is not subscribed, subscribe them
+        await Subscription.insertOne({ subscriber: req.user.id, channel:channelId });
+        console.log(`Subscribed user ${req.user.id} to channel ${channelId}`);
+        res.status(200).json(new ApiResponse(
+            200,
+            "Subscribed successfully "))
+
     }
-
-    await Subscription.findById(channelId)
-
 
 })
 

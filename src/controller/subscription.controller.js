@@ -17,7 +17,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         await Subscription.deleteOne({ subscriber: req.user.id, channel:channelId });
         console.log(`Unsubscribed user ${req.user.id} from channel ${channelId}`);
         res.status(200).json( new ApiResponse(
-            200,
+            200,{},
     "Unsubscribed successfully"
         ))
     } else {
@@ -25,7 +25,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
         await Subscription.insertOne({ subscriber: req.user.id, channel:channelId });
         console.log(`Subscribed user ${req.user.id} to channel ${channelId}`);
         res.status(200).json(new ApiResponse(
-            200,
+            200,{},
             "Subscribed successfully "))
 
     }
@@ -44,7 +44,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     }
 
     const Channel = await Subscription.findById(channelId)
-    console.log(Channel);
+    //console.log(Channel);
     if(!Channel){
         throw new ApiError(500, "failed to fetch channel")
     }
@@ -72,7 +72,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
     return res.status(200)
         .json(new ApiResponse(
-            200,subscribedChannel.channel,"subscribed channel fetched successfully")
+            200,subscribedChannel.channel,subscribedChannel,"subscribed channel fetched successfully")
         )
 
 })
